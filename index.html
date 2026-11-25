@@ -14,25 +14,24 @@
     --accent: #3d4dff;
     --accent-deep: #2631c9;
     --accent-soft: #e4e7ff;
+    --danger: #d6334a;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: grid; grid-template-columns: 1fr 380px;
+    display: grid; grid-template-columns: 1fr 400px;
     -webkit-tap-highlight-color: transparent;
   }
   main {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2.5rem; padding: 2rem; user-select: none;
+    gap: 2.5rem; padding: 2rem; user-select: none; position: relative;
   }
   .score { text-align: center; }
-  #count {
-    font-size: clamp(3.5rem, 11vw, 7rem); font-weight: 800; letter-spacing: -0.03em;
-    line-height: 1; font-variant-numeric: tabular-nums;
-  }
+  #count { font-size: clamp(3.5rem, 11vw, 7rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
   #rate { margin-top: .6rem; color: var(--muted); font-size: 1.05rem; }
+  #mult { display: none; margin-top: .5rem; padding: .2rem .7rem; border-radius: 99px; background: var(--ink); color: #fff; font-size: .85rem; font-weight: 700; }
 
   #btn {
     position: relative; width: min(60vw, 260px); aspect-ratio: 1; border: 0; border-radius: 50%;
@@ -40,22 +39,25 @@
     box-shadow: 0 14px 0 #1b2494, 0 28px 40px rgba(38, 49, 201, .35);
     cursor: pointer; transition: transform .07s, box-shadow .07s;
   }
-  #btn:active, #btn.down { transform: translateY(10px); box-shadow: 0 4px 0 #1b2494, 0 10px 20px rgba(38, 49, 201, .35); }
+  #btn:active { transform: translateY(10px); box-shadow: 0 4px 0 #1b2494, 0 10px 20px rgba(38, 49, 201, .35); }
   #btn:focus-visible { outline: 4px solid var(--ink); outline-offset: 8px; }
-  #btn::after {
-    content: ""; position: absolute; inset: 12% 22% 55% 22%; border-radius: 50%;
-    background: linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0));
-  }
+  #btn::after { content: ""; position: absolute; inset: 12% 22% 55% 22%; border-radius: 50%; background: linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0)); }
   .hint { color: var(--muted); font-size: .9rem; margin-top: -1rem; }
 
-  aside {
-    background: var(--panel); border-left: 1px solid var(--line);
-    padding: 1.75rem 1.5rem; overflow-y: auto; display: flex; flex-direction: column;
+  #cheatBtn {
+    position: absolute; left: 1.25rem; bottom: 1.25rem; padding: .5rem .9rem;
+    background: transparent; color: var(--muted); border: 1.5px dashed var(--line); border-radius: 10px;
+    font: inherit; font-size: .85rem; cursor: pointer;
   }
+  #cheatBtn:hover { color: var(--ink); border-color: var(--muted); }
+
+  aside { background: var(--panel); border-left: 1px solid var(--line); padding: 1.75rem 1.5rem; overflow-y: auto; display: flex; flex-direction: column; }
   aside h2 { margin: 0 0 1.25rem; font-size: 1.25rem; }
+  .group { margin: 1.25rem 0 .6rem; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .group:first-of-type { margin-top: 0; }
   .buy {
-    position: relative; overflow: hidden; width: 100%; text-align: left; margin-bottom: .75rem;
-    padding: 1rem 1.1rem; background: var(--panel); color: var(--ink); font: inherit;
+    position: relative; overflow: hidden; width: 100%; text-align: left; margin-bottom: .6rem;
+    padding: .9rem 1.1rem; background: var(--panel); color: var(--ink); font: inherit;
     border: 1.5px solid var(--line); border-radius: 14px; cursor: pointer;
     display: grid; grid-template-columns: 1fr auto; gap: .15rem 1rem; align-items: center;
     transition: border-color .15s, transform .1s;
@@ -67,23 +69,42 @@
   .buy:not(.ready) { cursor: not-allowed; }
   .buy:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
   .buy .name { font-weight: 700; }
-  .buy .owned { font-size: 1.5rem; font-weight: 800; color: var(--muted); grid-row: span 2; font-variant-numeric: tabular-nums; }
-  .buy .desc { color: var(--muted); font-size: .9rem; }
-  .buy .price { font-size: .9rem; font-weight: 600; color: var(--accent-deep); }
-  #reset { margin-top: auto; align-self: flex-start; background: none; border: 0; color: var(--muted); font: inherit; font-size: .9rem; text-decoration: underline; cursor: pointer; padding: .5rem 0; }
+  .buy .owned { font-size: 1.4rem; font-weight: 800; color: var(--muted); grid-row: span 2; font-variant-numeric: tabular-nums; }
+  .buy .desc { color: var(--muted); font-size: .88rem; }
+  .buy .price { font-weight: 600; color: var(--accent-deep); }
+  #reset { position: sticky; bottom: -1.75rem; margin: 1rem -1.5rem -1.75rem; padding: 1rem 1.5rem; width: calc(100% + 3rem); text-align: left; background: var(--panel); border: 0; border-top: 1px solid var(--line); color: var(--muted); font: inherit; font-size: .9rem; text-decoration: underline; cursor: pointer; }
+  #reset:hover { color: var(--danger); }
+  .actions .danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+  .actions .danger:hover { border-color: var(--danger); filter: brightness(1.1); }
 
   .pop { position: fixed; z-index: 10; pointer-events: none; font-weight: 800; font-size: 1.5rem; color: var(--accent); animation: rise .8s ease-out forwards; transform: translate(-50%, -50%); }
   @keyframes rise { to { transform: translate(-50%, -140px); opacity: 0; } }
 
+  dialog { border: 0; border-radius: 18px; padding: 1.75rem; width: min(92vw, 400px); background: var(--panel); color: var(--ink); box-shadow: 0 30px 80px rgba(20, 25, 50, .35); }
+  dialog::backdrop { background: rgba(20, 25, 50, .45); }
+  dialog h3 { margin: 0 0 .4rem; font-size: 1.2rem; }
+  dialog p { margin: 0 0 1.1rem; color: var(--muted); font-size: .92rem; }
+  #codeInput { width: 100%; padding: .8rem 1rem; font: inherit; font-size: 1.4rem; letter-spacing: .4em; text-align: center; border: 2px solid var(--line); border-radius: 12px; color: var(--ink); background: var(--bg); }
+  #codeInput:focus { outline: none; border-color: var(--accent); }
+  #codeInput.bad { border-color: var(--danger); animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .row { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
+  .row button, .actions button {
+    flex: 1; min-width: 5.5rem; padding: .7rem .8rem; font: inherit; font-weight: 600; font-size: .92rem;
+    background: var(--bg); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer;
+  }
+  .row button:hover, .actions button:hover { border-color: var(--accent); }
+  .row button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .label { margin: 1rem 0 .5rem; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .actions { display: flex; gap: .6rem; margin-top: 1.25rem; }
+  .actions .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
   @media (max-width: 760px) {
     body { grid-template-columns: 1fr; height: auto; }
-    main { padding: 3rem 1.5rem; }
+    main { padding: 3rem 1.5rem 4.5rem; }
     aside { border-left: 0; border-top: 1px solid var(--line); }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .pop { animation: none; opacity: 0; }
-    #btn, .buy { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .pop { animation: none; opacity: 0; } #btn, .buy { transition: none; } #codeInput.bad { animation: none; } }
 </style>
 </head>
 <body>
@@ -91,9 +112,11 @@
   <div class="score">
     <div id="count">0</div>
     <div id="rate">0 per second</div>
+    <div id="mult"></div>
   </div>
   <button id="btn" aria-label="Click to earn points"></button>
   <div class="hint">Click the button or press Space</div>
+  <button id="cheatBtn">Cheats</button>
 </main>
 <aside>
   <h2>Upgrades</h2>
@@ -101,49 +124,96 @@
   <button id="reset">Reset progress</button>
 </aside>
 
+<dialog id="resetDlg">
+  <h3>Reset progress?</h3>
+  <p>This erases your points, upgrades, and multiplier. It can't be undone.</p>
+  <div class="actions">
+    <button id="resetCancel">Cancel</button>
+    <button id="resetOk" class="danger">Reset</button>
+  </div>
+</dialog>
+
+<dialog id="codeDlg">
+  <h3>Enter code</h3>
+  <p>Type the cheat code to unlock the menu.</p>
+  <input id="codeInput" type="password" inputmode="numeric" maxlength="5" autocomplete="off" aria-label="Cheat code">
+  <div class="actions">
+    <button id="codeCancel">Cancel</button>
+    <button id="codeOk" class="primary">Unlock</button>
+  </div>
+</dialog>
+
+<dialog id="cheatDlg">
+  <h3>Cheat menu</h3>
+  <p>Have fun. Nothing here is saved as an achievement.</p>
+  <div class="label">Add points</div>
+  <div class="row" id="addRow"></div>
+  <div class="label">Global multiplier</div>
+  <div class="row" id="multRow"></div>
+  <div class="label">Upgrades</div>
+  <div class="row">
+    <button id="giveOne">+1 of every upgrade</button>
+    <button id="giveTen">+10 of every upgrade</button>
+  </div>
+  <div class="actions"><button id="cheatClose" class="primary">Close</button></div>
+</dialog>
+
 <script>
 // ---- Edit these to change the game ----
+const CHEAT_CODE = "90210";
+const COST_GROWTH = 1.15;
+const SAVE_KEY = "clicker-save-v2";
 const UPGRADES = [
-  { id: "finger",  name: "Stronger click", cost: 15,     perClick: 1,   perSec: 0,    desc: "+1 per click" },
-  { id: "auto",    name: "Auto clicker",   cost: 60,     perClick: 0,   perSec: 1,    desc: "+1 per second" },
-  { id: "double",  name: "Power gloves",   cost: 400,    perClick: 5,   perSec: 0,    desc: "+5 per click" },
-  { id: "factory", name: "Factory",        cost: 1500,   perClick: 0,   perSec: 12,   desc: "+12 per second" },
-  { id: "network", name: "Network",        cost: 12000,  perClick: 0,   perSec: 90,   desc: "+90 per second" },
-  { id: "mega",    name: "Mega boost",     cost: 100000, perClick: 100, perSec: 600,  desc: "+100 per click, +600 per second" },
+  // Click upgrades
+  { group: "Clicking", id: "finger",  name: "Stronger click",  cost: 15,       perClick: 1,      perSec: 0,       desc: "+1 per click" },
+  { id: "gloves",   name: "Power gloves",    cost: 250,      perClick: 5,      perSec: 0,       desc: "+5 per click" },
+  { id: "hammer",   name: "Click hammer",    cost: 3500,     perClick: 40,     perSec: 0,       desc: "+40 per click" },
+  { id: "titan",    name: "Titan fist",      cost: 60000,    perClick: 350,    perSec: 0,       desc: "+350 per click" },
+  { id: "quake",    name: "Earthquake",      cost: 2e6,      perClick: 4000,   perSec: 0,       desc: "+4K per click" },
+  // Automation
+  { group: "Automation", id: "auto",    name: "Auto clicker",   cost: 60,       perClick: 0, perSec: 1,       desc: "+1 per second" },
+  { id: "bot",      name: "Click bot",       cost: 500,      perClick: 0,      perSec: 6,       desc: "+6 per second" },
+  { id: "factory",  name: "Factory",         cost: 4000,     perClick: 0,      perSec: 35,      desc: "+35 per second" },
+  { id: "lab",      name: "Research lab",    cost: 30000,    perClick: 0,      perSec: 200,     desc: "+200 per second" },
+  { id: "network",  name: "Network",         cost: 250000,   perClick: 0,      perSec: 1400,    desc: "+1.4K per second" },
+  { id: "ai",       name: "Neural engine",   cost: 3e6,      perClick: 0,      perSec: 9000,    desc: "+9K per second" },
+  { id: "portal",   name: "Portal",          cost: 4e7,      perClick: 0,      perSec: 65000,   desc: "+65K per second" },
+  // Combined
+  { group: "Mega", id: "mega",    name: "Mega boost",      cost: 5e8,      perClick: 60000,  perSec: 450000,  desc: "+60K per click, +450K per second" },
+  { id: "ultra",    name: "Ultra core",      cost: 1e10,     perClick: 1e6,    perSec: 8e6,     desc: "+1M per click, +8M per second" },
 ];
-const COST_GROWTH = 1.15;      // each purchase costs 15% more than the last
-const SAVE_KEY = "clicker-save";
 // ---------------------------------------
 
-let state = { points: 0, owned: {} };
+let state = { points: 0, owned: {}, mult: 1 };
 try {
-  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-  if (saved && typeof saved.points === "number") state = saved;
+  const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+  if (s && typeof s.points === "number") state = Object.assign(state, s);
 } catch (e) {}
 
 const $ = id => document.getElementById(id);
 const owned = u => state.owned[u.id] || 0;
 const cost = u => Math.ceil(u.cost * Math.pow(COST_GROWTH, owned(u)));
-const perClick = () => 1 + UPGRADES.reduce((n, u) => n + u.perClick * owned(u), 0);
-const perSec = () => UPGRADES.reduce((n, u) => n + u.perSec * owned(u), 0);
-const fmt = n => {
-  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
-  if (n >= 1e4) return (n / 1e3).toFixed(1) + "K";
-  return Math.floor(n).toLocaleString();
-};
+const perClick = () => (1 + UPGRADES.reduce((n, u) => n + u.perClick * owned(u), 0)) * state.mult;
+const perSec = () => UPGRADES.reduce((n, u) => n + u.perSec * owned(u), 0) * state.mult;
+const SUFFIX = ["", "K", "M", "B", "T", "Qa", "Qi"];
+function fmt(n) {
+  if (n < 1e4) return Math.floor(n).toLocaleString();
+  const i = Math.min(SUFFIX.length - 1, Math.floor(Math.log10(n) / 3));
+  return (n / Math.pow(1000, i)).toFixed(2).replace(/\.?0+$/, "") + SUFFIX[i];
+}
 
 const buttons = {};
 UPGRADES.forEach(u => {
+  if (u.group) {
+    const g = document.createElement("div");
+    g.className = "group"; g.textContent = u.group;
+    $("shop").appendChild(g);
+  }
   const b = document.createElement("button");
   b.className = "buy";
   b.innerHTML = '<span class="fill"></span><span class="name"></span><span class="owned"></span><span class="desc"></span>';
   b.onclick = () => {
-    if (state.points >= cost(u)) {
-      state.points -= cost(u);
-      state.owned[u.id] = owned(u) + 1;
-      render();
-    }
+    if (state.points >= cost(u)) { state.points -= cost(u); state.owned[u.id] = owned(u) + 1; render(); }
   };
   $("shop").appendChild(b);
   buttons[u.id] = b;
@@ -152,6 +222,8 @@ UPGRADES.forEach(u => {
 function render() {
   $("count").textContent = fmt(state.points);
   $("rate").textContent = fmt(perSec()) + " per second";
+  $("mult").style.display = state.mult > 1 ? "inline-block" : "none";
+  $("mult").textContent = state.mult + "x multiplier";
   UPGRADES.forEach(u => {
     const b = buttons[u.id], c = cost(u);
     b.classList.toggle("ready", state.points >= c);
@@ -160,35 +232,72 @@ function render() {
     b.querySelector(".owned").textContent = owned(u);
     b.querySelector(".desc").innerHTML = u.desc + ' · <span class="price">' + fmt(c) + '</span>';
   });
-}
-
-function click(x, y) {
-  state.points += perClick();
-  const p = document.createElement("div");
-  p.className = "pop";
-  p.textContent = "+" + fmt(perClick());
-  p.style.left = x + "px";
-  p.style.top = y + "px";
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 800);
-  render();
+  document.querySelectorAll("#multRow button").forEach(b => b.classList.toggle("on", +b.dataset.m === state.mult));
 }
 
 $("btn").addEventListener("click", e => {
   const r = e.currentTarget.getBoundingClientRect();
-  // keyboard clicks have no pointer position, so fall back to the button's center
   const x = e.detail ? e.clientX : r.left + r.width / 2;
   const y = e.detail ? e.clientY : r.top + r.height / 2;
-  click(x + (Math.random() * 40 - 20), y - 20);
+  state.points += perClick();
+  const p = document.createElement("div");
+  p.className = "pop"; p.textContent = "+" + fmt(perClick());
+  p.style.left = (x + Math.random() * 40 - 20) + "px"; p.style.top = (y - 20) + "px";
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 800);
+  render();
 });
 
-$("reset").onclick = () => {
-  if (confirm("Reset all progress?")) { state = { points: 0, owned: {} }; render(); }
+$("reset").onclick = () => $("resetDlg").showModal();
+$("resetCancel").onclick = () => $("resetDlg").close();
+$("resetOk").onclick = () => {
+  state = { points: 0, owned: {}, mult: 1 };
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  save();
+  render();
+  $("resetDlg").close();
 };
 
+// ---- Cheat menu ----
+[1e3, 1e6, 1e9, 1e12].forEach(n => {
+  const b = document.createElement("button");
+  b.textContent = "+" + fmt(n);
+  b.onclick = () => { state.points += n; render(); };
+  $("addRow").appendChild(b);
+});
+[1, 2, 10, 100].forEach(m => {
+  const b = document.createElement("button");
+  b.textContent = m + "x"; b.dataset.m = m;
+  b.onclick = () => { state.mult = m; render(); };
+  $("multRow").appendChild(b);
+});
+const give = n => { UPGRADES.forEach(u => state.owned[u.id] = owned(u) + n); render(); };
+$("giveOne").onclick = () => give(1);
+$("giveTen").onclick = () => give(10);
+$("cheatClose").onclick = () => $("cheatDlg").close();
+
+function tryCode() {
+  if ($("codeInput").value === CHEAT_CODE) {
+    $("codeDlg").close();
+    $("cheatDlg").showModal();
+  } else {
+    const i = $("codeInput");
+    i.classList.remove("bad"); void i.offsetWidth; i.classList.add("bad");
+    i.value = ""; i.focus();
+  }
+}
+$("cheatBtn").onclick = () => { $("codeInput").value = ""; $("codeInput").classList.remove("bad"); $("codeDlg").showModal(); $("codeInput").focus(); };
+$("codeOk").onclick = tryCode;
+$("codeCancel").onclick = () => $("codeDlg").close();
+$("codeInput").addEventListener("keydown", e => { if (e.key === "Enter") tryCode(); });
+
+// ---- Loops and saving ----
+const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {} };
 setInterval(() => { if (perSec()) { state.points += perSec() / 10; render(); } }, 100);
-setInterval(() => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {} }, 3000);
-addEventListener("beforeunload", () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {} });
+setInterval(save, 3000);
+addEventListener("beforeunload", save);
+addEventListener("pagehide", save);
+document.addEventListener("visibilitychange", () => { if (document.hidden) save(); });
 
 render();
 </script>
